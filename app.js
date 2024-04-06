@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
+const mongoose = require("mongoose");
 const indexRouter = require("./routes/index");
 const MongoStore = require("connect-mongo");
 
