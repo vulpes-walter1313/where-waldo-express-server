@@ -4,6 +4,7 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const indexRouter = require("./routes/index");
 const MongoStore = require("connect-mongo");
+const morgan = require("morgan");
 
 const app = express();
 
@@ -30,7 +31,7 @@ app.use(
     }),
   }),
 );
-
+app.use(morgan("dev"));
 app.use("/", indexRouter);
 app.all("*", (req, res, next) => {
   const error = new Error("This resource does not exist");

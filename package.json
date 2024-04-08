@@ -18,7 +18,8 @@
     "express-async-handler": "^1.2.0",
     "express-session": "^1.18.0",
     "express-validator": "^7.0.1",
-    "mongoose": "^8.3.0"
+    "mongoose": "^8.3.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
