@@ -33,14 +33,20 @@ app.use(
 
 app.use("/", indexRouter);
 app.all("*", (req, res, next) => {
-  const error = new Error();
+  const error = new Error("This resource does not exist");
   error.status = 404;
-  error.message = "this resource does not exist.";
   next(error);
 });
 app.use((err, req, res, next) => {
+  console.error(err);
   err.message = err.message ?? "Unexpected Error occured";
-  res.status(err.status ?? 500).json({ success: false, error: err });
+  res.status(err.status ?? 500).json({
+    success: false,
+    error: {
+      message: err.toString(),
+      status: err.status ?? 500,
+    },
+  });
 });
 
 const server = app.listen(process.env.PORT, () => {
