@@ -2,3 +2,4 @@ node_modules/
 .env
 addImages.js
 addScores.js
+addCharacterCoords.js
