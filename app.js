@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const indexRouter = require("./routes/index");
 const MongoStore = require("connect-mongo");
 const morgan = require("morgan");
+const cors = require('cors');
 
 const app = express();
 
@@ -14,6 +15,9 @@ async function startMongoose() {
 }
 startMongoose().catch((err) => console.log(err));
 
+app.use(cors({
+  origin: process.env.CLIENT_ORIGIN
+}))
 app.use(express.json());
 app.use(
   session({
