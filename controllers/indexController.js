@@ -216,15 +216,20 @@ module.exports.POST_SCOREBOARD = [
   }),
 ];
 
-module.exports.GET_GAMESTATS = asyncHandler( async (req, res) => {
+module.exports.GET_GAMESTATS = asyncHandler(async (req, res) => {
   if (req.session.endTime === null) {
-    res.json({success: true, gameWon: false});
+    res.json({ success: true, gameWon: false });
   } else {
     const score = req.session.endTime - req.session.startTime;
     const lastScore = (
       await Scores.find({}).sort({ scoreMillis: "desc" }).limit(1).exec()
     )[0];
     const isTopScore = lastScore.scoreMillis > score ? true : false;
-    res.json({success: true, gameWon: true, score: score, isTopScore: isTopScore});
+    res.json({
+      success: true,
+      gameWon: true,
+      score: score,
+      isTopScore: isTopScore,
+    });
   }
 });
