@@ -136,18 +136,39 @@ module.exports.POST_VERIFYCLICK = [
   }),
 ];
 
-module.exports.GET_SCOREBOARD = asyncHandler(async (req, res) => {
-  let limit = parseInt(req.query.limit) || 10;
-  if (limit > 50) {
-    limit = 50;
-  }
-  const scores = await Scores.find({})
-    .sort({ scoreMillis: "asc" })
-    .limit(limit)
-    .exec();
-  const numOfScores = scores.length;
-  res.json({ success: true, topScores: scores, numOfScores: numOfScores });
-});
+module.exports.GET_SCOREBOARD = [
+  query("gameName").custom((value) => {
+    if (value === "waldo-1" || value === "waldo-2") {
+      return true;
+    } else {
+      throw new Error("This value for gameName query doesn't exist");
+    }
+  }),
+  query("limit").isInt({ min: 1, max: 50 }),
+  asyncHandler(async (req, res) => {
+    const valResult = validationResult(req);
+    if (!valResult.isEmpty()) {
+      return res.status(400).json({ success: false, error: valResult.array() });
+    }
+    /**
+     * The def of Data in query params
+     * @typedef {{gameName: string, limit: string}} getScoreboardData
+     */
+    /** @type getScoreboardData */
+    const data = matchedData(req);
+    let limit = parseInt(data.limit) || 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    const gamePlayed = await GameImage.findOne({ name: data.gameName }).exec();
+    const scores = await Scores.find({ game: gamePlayed })
+      .sort({ scoreMillis: "asc" })
+      .limit(limit)
+      .exec();
+    const numOfScores = scores.length;
+    res.json({ success: true, topScores: scores, numOfScores: numOfScores });
+  }),
+];
 
 module.exports.POST_SCOREBOARD = [
   body("username").isAlphanumeric().isLength({ max: 40 }),
