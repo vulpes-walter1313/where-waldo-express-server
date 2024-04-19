@@ -182,13 +182,14 @@ module.exports.POST_SCOREBOARD = [
         throw error;
       }
       const { username } = matchedData(req);
-
+      const gamePlayed = await GameImage.findOne({name: req.session.gameName}).exec();
       // check if less than 50 scores are in db
-      const quantityOfScores = await Scores.countDocuments({}).exec();
+      const quantityOfScores = await Scores.countDocuments({game: gamePlayed}).exec();
       if (quantityOfScores < 50) {
         const newScore = new Scores({
           username: username ?? "Anonymous",
           scoreMillis: timeScoreMillis,
+          game: gamePlayed
         });
         await newScore.save();
         req.session.scoreSubmitted = true;
@@ -209,6 +210,7 @@ module.exports.POST_SCOREBOARD = [
           const newScore = new Scores({
             username: username ?? "Anonymous",
             scoreMillis: timeScoreMillis,
+            game: gamePlayed
           });
           await newScore.save();
           req.session.scoreSubmitted = true;
@@ -226,11 +228,7 @@ module.exports.POST_SCOREBOARD = [
             score: timeScoreMillis,
           });
         }
-        // res.json({success: tr})
       }
-
-      // if newscore beats last score, drop last score
-      // and insert new score.
     } else {
       return res.status(400).json({ success: false, error: valResult.array() });
     }
