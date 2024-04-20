@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --forceExit",
     "dev": "nodemon app.js",
     "start": "node app.js",
     "pretty": "prettier . --write"
@@ -27,6 +27,7 @@
     "@faker-js/faker": "^8.4.1",
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "supertest": "^6.3.4"
   }
 }
