@@ -182,14 +182,18 @@ module.exports.POST_SCOREBOARD = [
         throw error;
       }
       const { username } = matchedData(req);
-      const gamePlayed = await GameImage.findOne({name: req.session.gameName}).exec();
+      const gamePlayed = await GameImage.findOne({
+        name: req.session.gameName,
+      }).exec();
       // check if less than 50 scores are in db
-      const quantityOfScores = await Scores.countDocuments({game: gamePlayed}).exec();
+      const quantityOfScores = await Scores.countDocuments({
+        game: gamePlayed,
+      }).exec();
       if (quantityOfScores < 50) {
         const newScore = new Scores({
           username: username ?? "Anonymous",
           scoreMillis: timeScoreMillis,
-          game: gamePlayed
+          game: gamePlayed,
         });
         await newScore.save();
         req.session.scoreSubmitted = true;
@@ -210,7 +214,7 @@ module.exports.POST_SCOREBOARD = [
           const newScore = new Scores({
             username: username ?? "Anonymous",
             scoreMillis: timeScoreMillis,
-            game: gamePlayed
+            game: gamePlayed,
           });
           await newScore.save();
           req.session.scoreSubmitted = true;
@@ -240,15 +244,31 @@ module.exports.GET_GAMESTATS = asyncHandler(async (req, res) => {
     res.json({ success: true, gameWon: false });
   } else {
     const score = req.session.endTime - req.session.startTime;
-    const lastScore = (
-      await Scores.find({}).sort({ scoreMillis: "desc" }).limit(1).exec()
-    )[0];
-    const isTopScore = lastScore.scoreMillis > score ? true : false;
-    res.json({
-      success: true,
-      gameWon: true,
-      score: score,
-      isTopScore: isTopScore,
-    });
+    const gamePlayed = await GameImage.findOne({
+      name: req.session.gameName,
+    }).exec();
+    const numOfScores = await Scores.countDocuments({
+      game: gamePlayed,
+    }).exec();
+
+    if (numOfScores < 50) {
+      return res.json({
+        success: true,
+        gameWon: true,
+        score: score,
+        isTopScore: true,
+      });
+    } else {
+      const lastScore = (
+        await Scores.find({game: gamePlayed}).sort({ scoreMillis: "desc" }).limit(1).exec()
+      )[0];
+      const isTopScore = lastScore.scoreMillis > score ? true : false;
+      return res.json({
+        success: true,
+        gameWon: true,
+        score: score,
+        isTopScore: isTopScore,
+      });
+    }
   }
 });
