@@ -256,6 +256,7 @@ module.exports.GET_GAMESTATS = asyncHandler(async (req, res) => {
         gameWon: true,
         score: score,
         isTopScore: true,
+        scoreSubmitted: req.session.scoreSubmitted
       });
     } else {
       const lastScore = (
@@ -270,6 +271,7 @@ module.exports.GET_GAMESTATS = asyncHandler(async (req, res) => {
         gameWon: true,
         score: score,
         isTopScore: isTopScore,
+        scoreSubmitted: req.session.scoreSubmitted
       });
     }
   }
