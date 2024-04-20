@@ -125,6 +125,38 @@ describe("testing clicks", () => {
     expect(secondRes.body).toHaveProperty("isTopScore");
     expect(secondRes.body).toHaveProperty("score");
   });
+
+  test("unsuccessful clicks is working normally", async () => {
+    const agent = request.agent(app);
+    await agent.get("/gameimage?imageCode=1");
+
+    const response = await agent.post("/verifyclick").send({
+      character: "waldo",
+      xCoord: 111,
+      yCoord: 111,
+      widthpx: 1500,
+      heightpx: 926,
+    });
+
+    expect(response.body).toEqual({
+      success: true,
+      clickIsCorrect: false,
+      wonGame: false,
+    });
+    const secondRes = await agent.post("/verifyclick").send({
+      character: "wizard",
+      xCoord: 123,
+      yCoord: 123,
+      widthpx: 1500,
+      heightpx: 926,
+    });
+
+    expect(secondRes.body).toEqual({
+      success: true,
+      clickIsCorrect: false,
+      wonGame: false,
+    });
+  });
 });
 
 afterAll(async () => {
