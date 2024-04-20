@@ -207,8 +207,6 @@ module.exports.POST_SCOREBOARD = [
         const lastScore = (
           await Scores.find({}).sort({ scoreMillis: "desc" }).limit(1).exec()
         )[0];
-        console.log("last score:\n");
-        console.log(lastScore);
         if (lastScore.scoreMillis > timeScoreMillis) {
           await Scores.findByIdAndDelete(lastScore._id);
           const newScore = new Scores({
@@ -234,6 +232,7 @@ module.exports.POST_SCOREBOARD = [
         }
       }
     } else {
+      // failed validation
       return res.status(400).json({ success: false, error: valResult.array() });
     }
   }),
