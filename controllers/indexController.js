@@ -260,7 +260,10 @@ module.exports.GET_GAMESTATS = asyncHandler(async (req, res) => {
       });
     } else {
       const lastScore = (
-        await Scores.find({game: gamePlayed}).sort({ scoreMillis: "desc" }).limit(1).exec()
+        await Scores.find({ game: gamePlayed })
+          .sort({ scoreMillis: "desc" })
+          .limit(1)
+          .exec()
       )[0];
       const isTopScore = lastScore.scoreMillis > score ? true : false;
       return res.json({
