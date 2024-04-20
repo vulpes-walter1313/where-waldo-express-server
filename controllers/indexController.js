@@ -171,7 +171,7 @@ module.exports.GET_SCOREBOARD = [
 ];
 
 module.exports.POST_SCOREBOARD = [
-  body("username").isAlphanumeric().isLength({ max: 40 }),
+  body("username").isLength({ max: 40 }),
   asyncHandler(async (req, res) => {
     const valResult = validationResult(req);
     if (valResult.isEmpty()) {
@@ -191,7 +191,7 @@ module.exports.POST_SCOREBOARD = [
       }).exec();
       if (quantityOfScores < 50) {
         const newScore = new Scores({
-          username: username ?? "Anonymous",
+          username: username || "Anonymous",
           scoreMillis: timeScoreMillis,
           game: gamePlayed,
         });
