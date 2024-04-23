@@ -43,6 +43,7 @@ app.use(
 );
 if (process.env.NODE_ENV === "production") {
   // production middleware
+  app.enable('trust proxy');
   app.use(helmet());
   app.disable("x-powered-by");
   app.use(
