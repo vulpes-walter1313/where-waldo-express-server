@@ -18,6 +18,8 @@ startMongoose().catch((err) => console.log(err));
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN,
+    optionsSuccessStatus: 200,
+    credentials: true,
   }),
 );
 app.use(express.json());
