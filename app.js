@@ -6,6 +6,8 @@ const indexRouter = require("./routes/index");
 const MongoStore = require("connect-mongo");
 const morgan = require("morgan");
 const cors = require("cors");
+const helmet = require("helmet");
+const { rateLimit } = require("express-rate-limit");
 
 const app = express();
 
@@ -39,7 +41,22 @@ app.use(
     }),
   }),
 );
-app.use(morgan("dev"));
+if (process.env.NODE_ENV === "production") {
+  // production middleware
+  app.use(helmet());
+  app.disable("x-powered-by");
+  app.use(
+    rateLimit({
+      windowMs: 5 * 60 * 1000, // 5 minutes
+      limit: 50,
+      standardHeaders: "draft-7",
+      legacyHeaders: false,
+    }),
+  );
+  app.use(morgan("common"));
+} else {
+  app.use(morgan("dev"));
+}
 app.use("/", indexRouter);
 app.all("*", (req, res, next) => {
   const error = new Error("This resource does not exist");
